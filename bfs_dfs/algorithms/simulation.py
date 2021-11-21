@@ -1,29 +1,33 @@
 from reader import Reader
 import timeit
 
+from queue import Queue
+
 
 class Simulation:
     def __init__(self):
         self.graph = Reader()
 
-    def bfs_lista(self, graph, start, end):
-        queue = []
-        queue.append([start])
-        while queue:
-            path = queue.pop(0)
+    @staticmethod
+    def bfs_lista(graph, start, end):
+        q = Queue()
+        q.put([start])
+        while q:
+            path = q.get()
             node = path[-1]
             if node == end:
                 return path
             for x in graph[int(node) - 1]:
                 new_path = list(path)
                 new_path.append(x)
-                queue.append(new_path)
+                q.put(new_path)
 
-    def bfs_macierz(self, graph, start, end):
-        queue = []
-        queue.append([start])
-        while queue:
-            path = queue.pop(0)
+    @staticmethod
+    def bfs_macierz(graph, start, end):
+        q = Queue()
+        q.put([start])
+        while q:
+            path = q.get()
             node = path[-1]
             if node == end:
                 return path
@@ -31,13 +35,14 @@ class Simulation:
                 if graph[int(node) - 1][x] == 1:
                     new_path = list(path)
                     new_path.append(x + 1)
-                    queue.append(new_path)
+                    q.put(new_path)
 
-    def bfs_tablica(self, graph, start, end):
-        queue = []
-        queue.append([start])
+    @staticmethod
+    def bfs_tablica(graph, start, end):
+        queue = Queue()
+        queue.put([start])
         while queue:
-            path = queue.pop(0)
+            path = queue.get()
             node = path[-1]
             if node == end:
                 return path
@@ -45,9 +50,10 @@ class Simulation:
                 if x[0] == node:
                     new_path = list(path)
                     new_path.append(x[1])
-                    queue.append(new_path)
+                    queue.put(new_path)
 
-    def dfs_lista(self, graph, start, end):
+    @staticmethod
+    def dfs_lista(graph, start, end):
         stack = [(start, [start])]
         visited = set()
         while stack:
@@ -59,7 +65,8 @@ class Simulation:
                 for x in graph[node - 1]:
                     stack.append((x, path + [x]))
 
-    def dfs_macierz(self, graph, start, end):
+    @staticmethod
+    def dfs_macierz(graph, start, end):
         stack = [(start, [start])]
         visited = set()
         while stack:
@@ -72,7 +79,8 @@ class Simulation:
                     if graph[node - 1][x] == 1:
                         stack.append((x + 1, path + [x + 1]))
 
-    def dfs_tablica(self, graph, start, end):
+    @staticmethod
+    def dfs_tablica(graph, start, end):
         stack = [(start, [start])]
         visited = set()
         while stack:
