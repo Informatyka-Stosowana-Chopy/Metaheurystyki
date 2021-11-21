@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Algorithm(ABC):
 
-    def __init__(self, board_start: list, board_end: list, node: int):
+    def __init__(self, board_start: list, board_end: list, node: int, max_depth):
         self.current_board = board_start
         self.current_board_tuple = tuple(tuple(x) for x in self.current_board)
         self.children = []
@@ -14,6 +14,8 @@ class Algorithm(ABC):
         self.move_counter = 0
         self.solution_moves = ''
         self.node = node
+        self.max_depth = max_depth
+        self.current_depth = 0
 
     @abstractmethod
     def simulation(self):
@@ -23,7 +25,7 @@ class Algorithm(ABC):
         """
         used in get_children
 
-        if 0 occurred on one of side, then the corresponding direction is removed from list valid_moves
+        if 0 occurred on one of the side, then the corresponding direction is removed from list valid_moves
         :return:
         """
         self.valid_moves = ['L', 'R', 'U', 'D']
