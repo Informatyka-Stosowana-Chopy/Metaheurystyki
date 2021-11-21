@@ -182,6 +182,7 @@ while (choice != 0):
         end = int(input("Podaj wezel koncowy\n"))
         if choice2 == 1:
             macierzIncydencji = readFileTo2DArray(filename)
+            print(macierzIncydencji)
             print(test(macierzIncydencji, start, end, number, bfsMacierz, dfsMacierz))
         if choice2 == 2:
             macierzSasiedztwa = readFileTo2DArray(filename)
