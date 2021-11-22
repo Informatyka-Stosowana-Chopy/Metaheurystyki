@@ -1,1 +1,6 @@
-MAX_CAPACITY = 6_404_180
+import random
+
+print(random.random())
+print(random.random())
+print(random.random())
+print(random.random())
