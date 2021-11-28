@@ -6,11 +6,14 @@ from individual import Individual
 
 
 class Algorithm:
-    def __init__(self, backpack_max_capacity: int, population_size: int, individual_size: int, generation_numbers: int):
+    def __init__(self, backpack_max_capacity: int, population_size: int, individual_size: int, generation_numbers: int,
+                 iter: int, children):
         self.backpack = Backpack(backpack_max_capacity)
         self.population_size = population_size
         self.individual_size = individual_size
         self.generation_numbers = generation_numbers
+        self.iter = iter
+        self.children = children
         self.population = self.__generate_initial_population()
 
     def __generate_initial_population(self):
@@ -51,6 +54,13 @@ class Algorithm:
                 individual.choose_probability = individual.fitness / sum_of_fitness
             except ZeroDivisionError:
                 individual.choose_probability = 0
+
+    def get_probability_in_population(self):
+        sum_probability = 0
+        for individual in self.population:
+            if individual.choose_probability is not None:
+                sum_probability += individual.choose_probability
+        return sum_probability * 100
 
     def roulette_wheel_selection(self, number_of_chosen):
         self.__set_probability_in_population()
@@ -113,6 +123,7 @@ class Algorithm:
             for individual in self.population:
                 if individual.fitness > the_best_current_adaptation:
                     the_best_current_adaptation = individual.fitness
+                    self.iter += 1
 
             if the_best_current_adaptation > the_best_global_adaptation:
                 the_best_global_adaptation = the_best_current_adaptation
@@ -121,9 +132,10 @@ class Algorithm:
             parent_2 = self.roulette_wheel_selection(self.population_size)
 
             crossing_point = random.randint(0, self.individual_size - 1)
-            children = self.one_point_crossing(self.population[parent_1[0][0]], self.population[parent_2[0][0]], crossing_point)
+            self.children = self.one_point_crossing(self.population[parent_1[0][0]],
+                                                    self.population[parent_2[0][0]], crossing_point)
 
-            for child in children:
+            for child in self.children:
                 child = self.individual_mutation(child)
                 self.connect_population_and_children(child)
 
