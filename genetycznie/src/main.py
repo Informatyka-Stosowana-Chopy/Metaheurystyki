@@ -1,14 +1,11 @@
 from algorithm import Algorithm
+
 BACKPACK_MAX_CAPACITY = 6_404_180
 
-p = Algorithm(BACKPACK_MAX_CAPACITY, 10, 26, 1000)
+p = Algorithm(backpack_max_capacity=BACKPACK_MAX_CAPACITY, population_size=10, individual_size=26,
+              generation_numbers=100)
+
 p.simulation()
 
-local_max = 0
-for individual in p.population:
-    if individual.fitness > local_max:
-        local_max = individual.fitness
-    print(individual.fitness)
-
 print("############")
-print(local_max)
+print("wartość:", p.get_the_best_individual().fitness)

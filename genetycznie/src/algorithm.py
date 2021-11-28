@@ -47,7 +47,10 @@ class Algorithm:
             sum_of_fitness += individual.fitness
 
         for individual in self.population:
-            individual.choose_probability = individual.fitness / sum_of_fitness
+            try:
+                individual.choose_probability = individual.fitness / sum_of_fitness
+            except ZeroDivisionError:
+                individual.choose_probability = 0
 
     def roulette_wheel_selection(self, number_of_chosen):
         self.__set_probability_in_population()
@@ -117,9 +120,18 @@ class Algorithm:
             parent_1 = self.roulette_wheel_selection(self.population_size)
             parent_2 = self.roulette_wheel_selection(self.population_size)
 
-            crossing_point = random.randint(0, self.individual_size - 1)  # TODO random crossing point?
+            crossing_point = random.randint(0, self.individual_size - 1)
             children = self.one_point_crossing(self.population[parent_1[0][0]], self.population[parent_2[0][0]], crossing_point)
 
             for child in children:
                 child = self.individual_mutation(child)
                 self.connect_population_and_children(child)
+
+    def get_the_best_individual(self):
+        global_max = 0
+        best_index = 0
+        for i, individual in enumerate(self.population):
+            if individual.fitness > global_max:
+                global_max = individual.fitness
+                best_index = i
+        return self.population[best_index]
