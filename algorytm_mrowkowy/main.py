@@ -1,4 +1,4 @@
-from algorithm import Algorithm
+from algorithm_old import Algorithm
 
 attraction_number = 6
 

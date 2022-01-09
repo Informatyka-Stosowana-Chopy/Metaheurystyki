@@ -2,54 +2,23 @@ import random
 
 
 class Ant:
-    def __init__(self, attractions_number: int):
-        self.total_attractions = range(0, attractions_number)
-        self.used_probability = []
-        self.used_indexes = []
-        self.visited_attractions = []
-        self.visited_attractions.append(random.randint(0, attractions_number - 1))
-        self.available_attractions = self.total_attractions - self.visited_attractions
+    def __init__(self, attractions_number: int, attraction_distance: list):
         self.attractions_number = attractions_number
+        self.visited_attractions = []
+        self.visited_attractions.append(random.randint(0, self.attractions_number - 1))
+        self.visited_attractions = []
 
-        self.attraction_distance = [
-            [0, 8, 7, 4, 6, 4],
-            [8, 0, 5, 7, 11, 5],
-            [7, 5, 0, 9, 6, 7],
-            [4, 7, 9, 0, 5, 6],
-            [6, 11, 6, 5, 0, 3],
-            [4, 5, 7, 6, 3, 0]
-        ]
-        self.pheromone_traces = [
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-        ]
+        self.attraction_distance = attraction_distance
+        # TODO zrobić by było wczytywane z pliku i aktualizowane - w mainie albo osobnej klasie (lepiej w klasie)
+
+    def visit_(self):
+        pass
 
     def visit_attraction(self):
         pass
 
     def visit_random_attraction(self):
         pass
-
-    def probabilistic_attraction_visit(self, alfa, beta):
-        current_attraction = self.visited_attractions[-1]
-        probability_sum = 0
-
-        for attraction in self.available_attractions:
-            self.used_indexes.append(attraction)
-            pheromones = pow(self.pheromone_traces[current_attraction][attraction], alfa)
-            heuristic = pow(self.attraction_distance[current_attraction][attraction], beta)
-            probability = pheromones * heuristic
-
-            self.used_probability.append(probability)
-
-        for probability in self.used_probability:
-            self.used_probability = [probability / probability_sum]
-
-        return [self.used_indexes, self.used_probability]
 
     def roulette_selection(self):
         intervals = []
@@ -73,9 +42,28 @@ class Ant:
 
         return total_distance
 
-    def configure_ants(self, multiplier: int):  # TODO: nie wiem czy powinno byc to tutaj czy w klasie algorithm
-        ants_number = round(self.attractions_number * multiplier)
-        ant_colony = []
-        for i in range(0, ants_number):
-            ant_colony.append(self)
-        return ant_colony
+    def visit_attractions_probabilistically(self, pheromone_traces, alfa, beta):
+        current_attraction = self.visited_attractions[-1]
+        all_attractions = [_ for _ in range(0, self.attractions_number)]
+        available_attractions = [attraction for attraction in all_attractions if attraction not in self.visited_attractions]
+
+        using_index = []
+        using_probability = []
+        probability_sum = 0
+
+        for attraction in available_attractions:
+            using_index.append(attraction)
+            pheromone = pow(pheromone_traces[current_attraction][attraction], alfa)
+            heuristic = pow(1/self.attraction_distance[current_attraction][attraction], beta)
+            probability = pheromone * heuristic
+            using_probability.append(probability)
+        using_probability = [probability / probability_sum for probability in using_probability]  # TODO to chyba źle
+        return [using_index, using_probability]
+
+
+
+
+
+
+
+
