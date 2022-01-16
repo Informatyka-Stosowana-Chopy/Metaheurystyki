@@ -19,15 +19,17 @@ class Ant:
 
     def visit_attraction(self, attraction_index: int):
         self.visited_attractions.append(attraction_index)
+        self.__update_available_attractions()
 
     def visit_random_attraction(self):
-        self.available_attractions = [attraction for attraction in self.all_attractions if
-                                      attraction.index not in self.visited_attractions]
+        self.__update_available_attractions()
 
         self.visited_attractions.append(
             self.available_attractions[random.randint(0, len(self.available_attractions) - 1)].index)
 
-        # update available_attractions
+        self.__update_available_attractions()
+
+    def __update_available_attractions(self):
         self.available_attractions = [attraction for attraction in self.all_attractions if
                                       attraction.index not in self.visited_attractions]
 
@@ -46,7 +48,6 @@ class Ant:
     def get_total_distance(self):
         total_distance = 0
         for a in range(1, len(self.visited_attractions)):
-            total_distance += abs(self.visited_attractions[a - 1] - self.visited_attractions[a])
             total_distance += math.sqrt(pow(
                 self.all_attractions[self.visited_attractions[a - 1]].x - self.all_attractions[
                     self.visited_attractions[a]].x, 2) + pow(
@@ -57,11 +58,12 @@ class Ant:
 
     def visit_attractions_probabilistically(self, pheromone_traces, alfa, beta):
         current_attraction = self.visited_attractions[-1]
-        self.available_attractions = [attraction for attraction in self.all_attractions if
-                                      attraction.index not in self.visited_attractions]
+        self.__update_available_attractions()
 
         probability_sum = 0
         using_probability = []
+        self.using_index = []
+        self.using_probability = []
         for attraction in self.available_attractions:
             self.using_index.append(attraction.index)
             pheromone = pow(pheromone_traces[current_attraction][attraction.index], alfa)
@@ -70,4 +72,4 @@ class Ant:
             using_probability.append(probability)
             probability_sum += probability
         self.using_probability = [probability / probability_sum for probability in
-                                  using_probability]  # TODO to chyba źle
+                                  using_probability]

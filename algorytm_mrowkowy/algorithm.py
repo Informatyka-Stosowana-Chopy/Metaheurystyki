@@ -82,6 +82,8 @@ class Algorithm:
                         ant.visit_random_attraction()
                     else:
                         index_to_visit = ant.roulette_selection(self.pheromone_traces, self.alfa, self.beta)[0][0]
+                        while index_to_visit in ant.visited_attractions:
+                            index_to_visit = ant.roulette_selection(self.pheromone_traces, self.alfa, self.beta)[0][0]
                         ant.visit_attraction(index_to_visit)
                     ant.current_distance = ant.get_total_distance()
                     if r == 0:
