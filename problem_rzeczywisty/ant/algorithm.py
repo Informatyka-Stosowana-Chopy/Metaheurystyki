@@ -9,7 +9,8 @@ from read_data import Reader
 
 class Algorithm:
     def __init__(self, multiplier: float, evaporation: float,
-                 iteration_number: int, alfa: int, beta: int, probability_random_attraction: float, file_name: str):
+                 iteration_number: int, alfa: int, beta: int, probability_random_attraction: float, file_name: str, max_capacity: float):
+        self.max_capacity = max_capacity
         self.pheromone_traces = []
         self.file_name = file_name
         self.probability_random_attraction = probability_random_attraction
@@ -59,7 +60,7 @@ class Algorithm:
         ants_number = round(self.multiplier)
         self.ant_colony = []
         for _ in range(0, ants_number):
-            self.ant_colony.append(Ant(self.attractions_number, self.attraction_distance, self.all_attraction))
+            self.ant_colony.append(Ant(self.attractions_number, self.attraction_distance, self.all_attraction, self.max_capacity))
 
     def update_pheromone(self):
         for x in range(0, self.attractions_number):
@@ -79,12 +80,20 @@ class Algorithm:
             self.configure_ants()
             for r in range(0, self.attractions_number - 1):
                 for ant in self.ant_colony:
+                    if ant.is_max_capacity():
+                        ant.visited_attractions.append(ant.all_attractions[0].index)
+                        ant.capacity = 0
                     # select attraction
                     method = random.uniform(0, 1)
                     if method <= self.probability_random_attraction:
                         ant.visit_random_attraction()
                     else:
-                        index_to_visit = ant.roulette_selection(self.pheromone_traces, self.alfa, self.beta)[0][0]
+                        try:
+                            index_to_visit = ant.roulette_selection(self.pheromone_traces, self.alfa, self.beta)[0][0]
+                        except IndexError:
+                            self.make_chart()
+                            return
+
                         while index_to_visit in ant.visited_attractions:
                             index_to_visit = ant.roulette_selection(self.pheromone_traces, self.alfa, self.beta)[0][0]
                         ant.visit_attraction(index_to_visit)

@@ -3,23 +3,29 @@ import math
 
 
 class Ant:
-    def __init__(self, attractions_number: int, attraction_distance: list, all_attraction: list):
+    def __init__(self, attractions_number: int, attraction_distance: list, all_attraction: list, max_capacity: float):
+        self.max_capacity = max_capacity
         self.available_attractions = None
         self.attractions_number = attractions_number
         self.all_attractions = all_attraction
-        self.visited_attractions = []
-        self.visited_attractions.append(random.randint(0, self.attractions_number - 1))
-
+        self.visited_attractions = [0]
+        self.__update_available_attractions()
+        self.capacity = 0
         self.using_index = []
         self.using_probability = []
 
         self.attraction_distance = attraction_distance
         self.current_distance = 0
-        # TODO zrobić by było wczytywane z pliku i aktualizowane - w mainie albo osobnej klasie (lepiej w klasie)
 
     def visit_attraction(self, attraction_index: int):
         self.visited_attractions.append(attraction_index)
         self.__update_available_attractions()
+        self.capacity += self.all_attractions[self.visited_attractions[-1]].demand
+
+    def is_max_capacity(self) -> bool:
+        if self.capacity > self.max_capacity:
+            return True
+        return False
 
     def visit_random_attraction(self):
         self.__update_available_attractions()
@@ -27,7 +33,9 @@ class Ant:
         self.visited_attractions.append(
             self.available_attractions[random.randint(0, len(self.available_attractions) - 1)].index)
 
+
         self.__update_available_attractions()
+        self.capacity += self.all_attractions[self.visited_attractions[-1]].demand
 
     def __update_available_attractions(self):
         self.available_attractions = [attraction for attraction in self.all_attractions if
